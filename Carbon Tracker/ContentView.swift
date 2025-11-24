@@ -214,28 +214,40 @@ struct ActivityRowView: View {
                 Text(entry.title)
                     .font(.headline)
                     .foregroundColor(.primary)
+                    .lineLimit(2)
                 HStack(spacing: 8) {
-                    Label("\(entry.distanceKm, specifier: "%.1f") km", systemImage: "ruler")
+                    Image(systemName: "ruler")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                    Text("\(entry.distanceKm, specifier: "%.1f") km")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
                     Text("•")
                         .foregroundColor(.secondary)
+                        .lineLimit(1)
                     Text(entry.mode.displayName)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
                 }
             }
             
             Spacer()
             
-            VStack(alignment: .trailing, spacing: 4) {
+            HStack(alignment: .lastTextBaseline, spacing: 4) {
                 Text("\(entry.emissionKg, specifier: "%.2f")")
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundColor(entry.color.color)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
                 Text("kg CO₂e")
                     .font(.caption2)
                     .foregroundColor(.secondary)
+                    .lineLimit(1)
             }
             
             Button(action: onEdit) {
