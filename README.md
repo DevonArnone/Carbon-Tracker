@@ -13,7 +13,6 @@ CarbonTrack is a SwiftUI iOS app that helps users track their carbon footprint b
 - **Swift** - Programming language
 - **SwiftUI** - UI framework
 - **URLSession** - Network requests
-- **async/await** - Asynchronous programming
 - **Climatiq API** - Carbon emission calculation service
 - **Codable** - JSON encoding/decoding
 
@@ -58,7 +57,6 @@ CarbonTrack is a SwiftUI iOS app that helps users track their carbon footprint b
   - `EmissionResponse` - Response structure
   - `ActivityEntry` - Local data model
 - **Error Handling**: Implements proper error handling with custom `EmissionsError` enum
-- **async/await**: Uses modern Swift concurrency for network calls
 
 ## Obstacles
 
