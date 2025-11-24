@@ -2,23 +2,17 @@
 
 ## Screenshots
 
-![Home View](screenshots/home_view.png)
-Main screen showing total emissions and activity list
+<img src="screenshots/home_view.png" width="200"> Main screen showing total emissions and activity list
 
-![Text Input View](screenshots/text_input_view.png)
-Form for adding a new activity with title, distance, and transport mode
+<img src="screenshots/text_input_view.png" width="200"> Form for adding a new activity with title, distance, and transport mode
 
-![Logged Carbon View](screenshots/logged_carbon_view.png)
-Display of a logged activity with emission details
+<img src="screenshots/logged_carbon_view.png" width="200"> Display of a logged activity with emission details
 
-![Edit Sheet](screenshots/edit_sheet.png)
-Edit activity sheet for modifying title and details
+<img src="screenshots/edit_sheet.png" width="200"> Edit activity sheet for modifying title and details
 
-![Color Edit](screenshots/color_edit.png)
-Color customization interface for activities
+<img src="screenshots/color_edit.png" width="200"> Color customization interface for activities
 
-![Multiple Carbon View](screenshots/Mult_carbon_view.png)
-View showing multiple logged activities with different colors
+<img src="screenshots/Mult_carbon_view.png" width="200"> View showing multiple logged activities with different colors
 
 ## Brief Description
 
