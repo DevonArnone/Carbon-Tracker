@@ -1,0 +1,209 @@
+import SwiftUI
+
+struct ContentView: View {
+    @State private var entries: [ActivityEntry] = []
+    @State private var showingAdd = false
+    
+    private var totalEmission: Double {
+        entries.reduce(0) { $0 + $1.emissionKg }
+    }
+    
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                backgroundGradient
+                mainContent
+            }
+            .navigationTitle("CarbonTrack")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    addButton
+                }
+            }
+            .sheet(isPresented: $showingAdd) {
+                AddActivityView(entries: $entries)
+            }
+        }
+    }
+        
+    private var backgroundGradient: some View {
+        LinearGradient(
+            colors: [Color(red: 0.95, green: 0.98, blue: 0.95), Color.white],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .ignoresSafeArea()
+    }
+    
+    private var mainContent: some View {
+        VStack(spacing: 0) {
+            summaryCard
+            entriesList
+        }
+    }
+    
+    private var summaryCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "leaf.fill")
+                    .foregroundColor(.green)
+                    .font(.title2)
+                Text("Total Emissions")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+            }
+            
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text("\(totalEmission, specifier: "%.2f")")
+                    .font(.system(size: 48, weight: .bold, design: .rounded))
+                    .foregroundColor(.green)
+                Text("kg CO₂e")
+                    .font(.title3)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(20)
+        .background(cardBackground)
+        .overlay(cardBorder)
+        .padding(.horizontal, 20)
+        .padding(.top, 10)
+    }
+    
+    private var cardBackground: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .fill(Color.white)
+            .shadow(color: Color.green.opacity(0.1), radius: 10, x: 0, y: 4)
+    }
+    
+    private var cardBorder: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .stroke(
+                LinearGradient(
+                    colors: [Color.green.opacity(0.3), Color.green.opacity(0.1)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                lineWidth: 2
+            )
+    }
+    
+    @ViewBuilder
+    private var entriesList: some View {
+        if entries.isEmpty {
+            emptyStateView
+        } else {
+            entriesListView
+        }
+    }
+    
+    private var emptyStateView: some View {
+        VStack(spacing: 20) {
+            Spacer()
+            Image(systemName: "leaf.circle.fill")
+                .font(.system(size: 80))
+                .foregroundColor(.green.opacity(0.3))
+            VStack(spacing: 8) {
+                Text("Start Tracking Your Carbon Footprint")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                Text("Tap the + button to add your first trip")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+    }
+    
+    private var entriesListView: some View {
+        List {
+            ForEach(entries) { entry in
+                ActivityRowView(entry: entry)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
+            }
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+    }
+    
+    private var addButton: some View {
+        Button {
+            showingAdd = true
+        } label: {
+            Image(systemName: "plus.circle.fill")
+                .font(.title2)
+                .foregroundColor(.green)
+        }
+    }
+}
+
+struct ActivityRowView: View {
+    let entry: ActivityEntry
+    
+    private var modeIcon: String {
+        switch entry.mode {
+        case .car:
+            return "car.fill"
+        case .air:
+            return "airplane"
+        case .rail:
+            return "tram.fill"
+        }
+    }
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(Color.green.opacity(0.15))
+                    .frame(width: 50, height: 50)
+                Image(systemName: modeIcon)
+                    .foregroundColor(.green)
+                    .font(.title3)
+            }
+            
+            VStack(alignment: .leading, spacing: 6) {
+                Text(entry.title)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                HStack(spacing: 8) {
+                    Label("\(entry.distanceKm, specifier: "%.1f") km", systemImage: "ruler")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    Text("•")
+                        .foregroundColor(.secondary)
+                    Text(entry.mode.displayName)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: 4) {
+                Text("\(entry.emissionKg, specifier: "%.2f")")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .foregroundColor(.green)
+                Text("kg CO₂e")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(16)
+        .background {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        }
+    }
+}
+
+#Preview {
+    ContentView()
+}
+
