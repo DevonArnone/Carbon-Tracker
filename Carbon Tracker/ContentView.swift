@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var entries: [ActivityEntry] = []
     @State private var showingAdd = false
+    @State private var editingEntry: ActivityEntry?
     
     private var totalEmission: Double {
         entries.reduce(0) { $0 + $1.emissionKg }
@@ -23,6 +24,30 @@ struct ContentView: View {
             }
             .sheet(isPresented: $showingAdd) {
                 AddActivityView(entries: $entries)
+            }
+            .sheet(item: $editingEntry) { entry in
+                EditActivitySheet(
+                    selectedColor: Binding(
+                        get: {
+                            entries.first(where: { $0.id == entry.id })?.color ?? .green
+                        },
+                        set: { newColor in
+                            if let index = entries.firstIndex(where: { $0.id == entry.id }) {
+                                entries[index].color = newColor
+                            }
+                        }
+                    ),
+                    selectedTitle: Binding(
+                        get: {
+                            entries.first(where: { $0.id == entry.id })?.title ?? ""
+                        },
+                        set: { newTitle in
+                            if let index = entries.firstIndex(where: { $0.id == entry.id }) {
+                                entries[index].title = newTitle
+                            }
+                        }
+                    )
+                )
             }
         }
     }
@@ -120,14 +145,32 @@ struct ContentView: View {
     private var entriesListView: some View {
         List {
             ForEach(entries) { entry in
-                ActivityRowView(entry: entry)
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
+                rowView(for: entry)
             }
         }
         .listStyle(.plain)
-        .scrollContentBackground(.hidden)
+        .scrollContentBackground(Visibility.hidden)
+    }
+    
+    @ViewBuilder
+    private func rowView(for entry: ActivityEntry) -> some View {
+        ActivityRowView(entry: entry) {
+            editingEntry = entry
+        }
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            Button(role: .destructive) {
+                withAnimation {
+                    if let index = entries.firstIndex(where: { $0.id == entry.id }) {
+                        entries.remove(at: index)
+                    }
+                }
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
     }
     
     private var addButton: some View {
@@ -143,6 +186,7 @@ struct ContentView: View {
 
 struct ActivityRowView: View {
     let entry: ActivityEntry
+    let onEdit: () -> Void
     
     private var modeIcon: String {
         switch entry.mode {
@@ -159,10 +203,10 @@ struct ActivityRowView: View {
         HStack(spacing: 16) {
             ZStack {
                 Circle()
-                    .fill(Color.green.opacity(0.15))
+                    .fill(entry.color.color.opacity(0.15))
                     .frame(width: 50, height: 50)
                 Image(systemName: modeIcon)
-                    .foregroundColor(.green)
+                    .foregroundColor(entry.color.color)
                     .font(.title3)
             }
             
@@ -188,10 +232,16 @@ struct ActivityRowView: View {
                 Text("\(entry.emissionKg, specifier: "%.2f")")
                     .font(.title3)
                     .fontWeight(.bold)
-                    .foregroundColor(.green)
+                    .foregroundColor(entry.color.color)
                 Text("kg CO₂e")
                     .font(.caption2)
                     .foregroundColor(.secondary)
+            }
+            
+            Button(action: onEdit) {
+                Image(systemName: "info.circle.fill")
+                    .foregroundColor(entry.color.color)
+                    .font(.title3)
             }
         }
         .padding(16)

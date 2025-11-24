@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 enum TransportMode: String, CaseIterable, Identifiable, Codable {
     case car
@@ -73,23 +74,25 @@ struct EmissionResponse: Codable {
 
 struct ActivityEntry: Identifiable, Codable {
     let id: UUID
-    let title: String
+    var title: String
     let mode: TransportMode
     let distanceKm: Double
     let emissionKg: Double
     let date: Date
+    var color: ActivityColor
     
     enum CodingKeys: String, CodingKey {
-        case title, mode, distanceKm, emissionKg, date
+        case title, mode, distanceKm, emissionKg, date, color
     }
     
-    init(id: UUID = UUID(), title: String, mode: TransportMode, distanceKm: Double, emissionKg: Double, date: Date) {
+    init(id: UUID = UUID(), title: String, mode: TransportMode, distanceKm: Double, emissionKg: Double, date: Date, color: ActivityColor = .green) {
         self.id = id
         self.title = title
         self.mode = mode
         self.distanceKm = distanceKm
         self.emissionKg = emissionKg
         self.date = date
+        self.color = color
     }
     
     init(from decoder: Decoder) throws {
@@ -100,6 +103,7 @@ struct ActivityEntry: Identifiable, Codable {
         self.distanceKm = try container.decode(Double.self, forKey: .distanceKm)
         self.emissionKg = try container.decode(Double.self, forKey: .emissionKg)
         self.date = try container.decode(Date.self, forKey: .date)
+        self.color = try container.decodeIfPresent(ActivityColor.self, forKey: .color) ?? .green
     }
     
     func encode(to encoder: Encoder) throws {
@@ -109,6 +113,26 @@ struct ActivityEntry: Identifiable, Codable {
         try container.encode(distanceKm, forKey: .distanceKm)
         try container.encode(emissionKg, forKey: .emissionKg)
         try container.encode(date, forKey: .date)
+        try container.encode(color, forKey: .color)
+    }
+}
+
+enum ActivityColor: String, Codable, CaseIterable {
+    case red, orange, yellow, green, blue, purple, pink, indigo, teal, gray
+    
+    var color: Color {
+        switch self {
+        case .red: return .red
+        case .orange: return .orange
+        case .yellow: return .yellow
+        case .green: return .green
+        case .blue: return .blue
+        case .purple: return .purple
+        case .pink: return .pink
+        case .indigo: return .indigo
+        case .teal: return .teal
+        case .gray: return .gray
+        }
     }
 }
 

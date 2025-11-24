@@ -21,9 +21,8 @@ CarbonTrack is a SwiftUI iOS app that helps users track their carbon footprint b
 
 1. **Clone or download this repository**
 2. **Add your Climatiq API key:**
-   - Copy `Config.example.swift` to `Config.swift`
+   - Go to `Config.example.swift`
    - Replace `YOUR_API_KEY_HERE` with your actual Climatiq API key
-   - Note: `Config.swift` is gitignored to keep your key private
 3. **Open the project in Xcode**
 4. **Build and run** (⌘R)
 
