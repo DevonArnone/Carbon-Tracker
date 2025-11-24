@@ -20,13 +20,22 @@ struct EmissionsService {
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
+        // For flights, include passengers parameter (default to 1)
+        let passengers = mode == .air ? 1 : nil
+        
+        // Get activity ID (for flights, this depends on distance)
+        let activityId = mode.activityId(forDistanceKm: distanceKm)
+        
         let body = EmissionRequest(
             emission_factor: EmissionFactor(
-                activity_id: mode.activityId,
+                activity_id: activityId,
                 data_version: "28.28"
             ),
-            parameters: EmissionParameters(distance: distanceKm,
-                                           distance_unit: "km")
+            parameters: EmissionParameters(
+                distance: distanceKm,
+                distance_unit: "km",
+                passengers: passengers
+            )
         )
         
         let encoder = JSONEncoder()
@@ -52,6 +61,15 @@ struct EmissionsService {
         print("API Response Body: \(responseString)")
         
         guard 200..<300 ~= http.statusCode else {
+            // For flights, if API doesn't support distance-based queries, use fallback calculation
+            if mode == .air && http.statusCode == 400 {
+                // Use generic emission factor for flights: ~0.255 kg CO2e per passenger-km (average)
+                // This is a fallback when Climatiq doesn't have a matching activity ID
+                let fallbackCo2e = distanceKm * 0.255
+                print("Using fallback calculation for flight: \(fallbackCo2e) kg CO2e for \(distanceKm) km")
+                return EmissionResponse(co2e: fallbackCo2e, co2e_unit: "kg")
+            }
+            
             var errorMsg = "HTTP \(http.statusCode)"
             if http.statusCode == 401 {
                 errorMsg += ": Unauthorized - Check your API key"

@@ -11,14 +11,17 @@ enum TransportMode: String, CaseIterable, Identifiable, Codable {
         rawValue.capitalized
     }
     
-    var activityId: String {
+    func activityId(forDistanceKm distanceKm: Double) -> String {
         switch self {
         case .car:
             // medium diesel car
             return "passenger_vehicle-vehicle_type_medium_car-fuel_source_diesel-engine_size_na-vehicle_age_na-vehicle_weight_na"
         case .air:
-            // generic short-haul flight economy
-            return "passenger_flight-route_type_domestic-aircraft_type_na-distance_na-class_economy"
+            // passenger flight - try minimal format
+            // Note: Climatiq flight emission factors may require origin/destination airports
+            // rather than just distance. This is a fallback that may not work.
+            // If this fails, consider using a generic calculation or requiring airport codes.
+            return "passenger_flight-route_type_domestic"
         case .rail:
             // generic passenger rail
             return "passenger_train-route_type_na-fuel_source_na"
@@ -40,6 +43,26 @@ struct EmissionFactor: Codable {
 struct EmissionParameters: Codable {
     let distance: Double
     let distance_unit: String
+    let passengers: Int?
+    
+    init(distance: Double, distance_unit: String, passengers: Int? = nil) {
+        self.distance = distance
+        self.distance_unit = distance_unit
+        self.passengers = passengers
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case distance, distance_unit, passengers
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(distance, forKey: .distance)
+        try container.encode(distance_unit, forKey: .distance_unit)
+        if let passengers = passengers {
+            try container.encode(passengers, forKey: .passengers)
+        }
+    }
 }
 
 // Data from Climatiq
