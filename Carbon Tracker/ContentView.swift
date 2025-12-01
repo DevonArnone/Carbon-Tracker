@@ -199,6 +199,16 @@ struct ActivityRowView: View {
         }
     }
     
+    private func formatEmission(_ value: Double) -> String {
+        if value >= 1000 {
+            // For large numbers, use 1 decimal place and add comma formatting
+            return String(format: "%.1f", value)
+        } else {
+            // For smaller numbers, use 2 decimal places
+            return String(format: "%.2f", value)
+        }
+    }
+    
     var body: some View {
         HStack(spacing: 16) {
             ZStack {
@@ -209,12 +219,14 @@ struct ActivityRowView: View {
                     .foregroundColor(entry.color.color)
                     .font(.title3)
             }
+            .fixedSize(horizontal: true, vertical: false)
             
             VStack(alignment: .leading, spacing: 6) {
                 Text(entry.title)
                     .font(.headline)
                     .foregroundColor(.primary)
                     .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
                 HStack(spacing: 8) {
                     Image(systemName: "ruler")
                         .font(.subheadline)
@@ -234,29 +246,33 @@ struct ActivityRowView: View {
                         .fixedSize(horizontal: true, vertical: false)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             
-            Spacer()
+            Spacer(minLength: 8)
             
-            HStack(alignment: .lastTextBaseline, spacing: 4) {
-                Text("\(entry.emissionKg, specifier: "%.2f")")
-                    .font(.title3)
+            HStack(alignment: .lastTextBaseline, spacing: 3) {
+                Text(formatEmission(entry.emissionKg))
+                    .font(entry.emissionKg >= 1000 ? .headline : .title3)
                     .fontWeight(.bold)
                     .foregroundColor(entry.color.color)
                     .lineLimit(1)
-                    .fixedSize(horizontal: true, vertical: false)
+                    .minimumScaleFactor(0.7)
                 Text("kg CO₂e")
                     .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(entry.color.color.opacity(0.8))
                     .lineLimit(1)
             }
+            .fixedSize(horizontal: true, vertical: false)
             
             Button(action: onEdit) {
                 Image(systemName: "info.circle.fill")
                     .foregroundColor(entry.color.color)
                     .font(.title3)
             }
+            .fixedSize(horizontal: true, vertical: false)
         }
         .padding(16)
+        .frame(maxWidth: .infinity)
         .background {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.white)
