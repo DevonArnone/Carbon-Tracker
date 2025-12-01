@@ -20,10 +20,8 @@ struct EmissionsService {
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        // For flights, include passengers parameter (default to 1)
         let passengers = mode == .air ? 1 : nil
         
-        // Get activity ID (for flights, this depends on distance)
         let activityId = mode.activityId(forDistanceKm: distanceKm)
         
         let body = EmissionRequest(

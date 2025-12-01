@@ -18,10 +18,7 @@ enum TransportMode: String, CaseIterable, Identifiable, Codable {
             // medium diesel car
             return "passenger_vehicle-vehicle_type_medium_car-fuel_source_diesel-engine_size_na-vehicle_age_na-vehicle_weight_na"
         case .air:
-            // passenger flight - try minimal format
-            // Note: Climatiq flight emission factors may require origin/destination airports
-            // rather than just distance. This is a fallback that may not work.
-            // If this fails, consider using a generic calculation or requiring airport codes.
+            // passenger flight
             return "passenger_flight-route_type_domestic"
         case .rail:
             // generic passenger rail
