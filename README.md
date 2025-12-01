@@ -1,5 +1,11 @@
 # CarbonTrack – Carbon Footprint Tracker
 
+## Brief Description
+
+CarbonTrack is a SwiftUI iOS app that helps users track their carbon footprint by calculating CO₂ emissions for various transportation activities. Users can log trips by selecting a transport mode (car, air, or rail) and entering the distance traveled. The app uses the Climatiq API to fetch real-time emission estimates based on the selected transportation method.
+
+**Purpose:** To raise awareness about personal carbon emissions and help users make more environmentally conscious transportation choices.
+
 ## Screenshots
 
 <img src="screenshots/home_view.png" width="200"> Main screen showing total emissions and activity list
@@ -13,12 +19,6 @@
 <img src="screenshots/color_edit.png" width="200"> Color customization interface for activities
 
 <img src="screenshots/Mult_carbon_view.png" width="200"> View showing multiple logged activities with different colors
-
-## Brief Description
-
-CarbonTrack is a SwiftUI iOS app that helps users track their carbon footprint by calculating CO₂ emissions for various transportation activities. Users can log trips by selecting a transport mode (car, air, or rail) and entering the distance traveled. The app uses the Climatiq API to fetch real-time emission estimates based on the selected transportation method.
-
-**Purpose:** To raise awareness about personal carbon emissions and help users make more environmentally conscious transportation choices.
 
 ## Tools Used
 
